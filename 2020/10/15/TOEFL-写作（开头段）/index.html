@@ -260,13 +260,12 @@
 <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
 <div id="gitalk" class="gitalk"></div>
 <script defer src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-<script src="https://github.com/hywang-66/hywang-66.github.io/blob/master/js/md5.min.js"></script>
 <script>
   window.onload = function () {
     var gitalk = new Gitalk({
       clientID: '54d4a54b2955d8629ac4',
       clientSecret: '0f969914a95167519c0d22b9a1bda052b24f8320',
-      id: md5(window.location.pathname),
+      id: (window.location.pathname),
       repo: 'hywang-66.github.io',
       owner: 'hywang-66',
       admin: 'hywang-66'
