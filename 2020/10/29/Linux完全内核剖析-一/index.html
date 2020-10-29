@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Linux完全内核剖析(一) - Hexo</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="google" content="notranslate" />
+
+  
+  
+  <meta name="description" content="Linux内核0.11完全注释--修订版3.0  
+
+..."> 
+  
+  <meta name="author" content="hywang"> 
+
+  
+    <link rel="icon" href="/images/icons/favicon-16x16.png" type="image/png" sizes="16x16">
+  
+  
+    <link rel="icon" href="/images/icons/favicon-32x32.png" type="image/png" sizes="32x32">
+  
+  
+    <link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png" sizes="180x180">
+  
+  
+    <meta rel="mask-icon" href="/images/icons/stun-logo.svg" color="#333333">
+  
+  
+    <meta rel="msapplication-TileImage" content="/images/icons/favicon-144x144.png">
+    <meta rel="msapplication-TileColor" content="#000000">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1445822_hhodbqn7tit.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.css">
+
+  
+
+  
+  
+  
+<link rel="stylesheet" href="https://cdn.bootcss.com/highlight.js/9.18.1/styles/xcode.min.css">
+
+  
+
+  <script>
+    var CONFIG = window.CONFIG || {};
+    var ZHAOO = window.ZHAOO || {};
+    CONFIG = {
+      isHome: false,
+      fancybox: true,
+      pjax: false,
+      lazyload: {
+        enable: true,
+        loadingImage: '/images/theme/loading.gif',
+      },
+      donate: {
+        enable: false,
+        alipay: '',
+        wechat: ''
+      },
+      motto: {
+        api: '',
+        default: '我在开了灯的床头下，想问问自己的心啊。'
+      },
+      galleries: {
+        enable: true
+      },
+      fab: {
+        enable: true,
+        alwaysShow: false
+      },
+      carrier: {
+        enable: true
+      },
+      daovoice: {
+        enable: true
+      }
+    }
+  </script>
+
+  
+
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+<body class="lock-screen">
+  <div class="loading"></div>
+  
+
+
+<nav class="navbar">
+  <div class="left"></div>
+  <div class="center">Linux完全内核剖析(一)</div>
+  <div class="right">
+    <i class="iconfont iconmenu j-navbar-menu"></i>
+  </div>
+</nav>
+
+  <nav class="menu">
+  <div class="menu-wrap">
+    <div class="menu-close">
+      <i class="iconfont iconbaseline-close-px"></i>
+    </div>
+    <ul class="menu-content">
+      
+      
+      
+      
+      <li class="menu-item"><a href="/ " class="underline"> 首页</a></li>
+      
+      
+      
+      
+      <li class="menu-item"><a href="/galleries " class="underline"> 摄影</a></li>
+      
+      
+      
+      
+      <li class="menu-item"><a href="/archives " class="underline"> 归档</a></li>
+      
+      
+      
+      
+      <li class="menu-item"><a href="/tags " class="underline"> 标签</a></li>
+      
+      
+      
+      
+      <li class="menu-item"><a href="/categories " class="underline"> 分类</a></li>
+      
+      
+      
+      
+      <li class="menu-item"><a href="/about " class="underline"> 关于</a></li>
+      
+    </ul>
+    <div class="menu-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Theme - <a target="_blank" href="https://github.com/hywang-66">hywang</a></p></div>
+  </div>
+</nav>
+  <main id="main">
+  <div class="container" id="container">
+    <article class="article">
+  <div class="wrap">
+    <section class="head">
+  <img   class="lazyload" data-original="/images/4dyz8l.jpg" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="  draggable="false">
+  <div class="head-mask">
+    <h1 class="head-title">Linux完全内核剖析(一)</h1>
+    <div class="head-info">
+      <span class="post-info-item"><i class="iconfont iconcalendar"></i>October 29, 2020</span
+        class="post-info-item">
+      
+      <span class="post-info-item"><i class="iconfont iconfont-size"></i>1430</span>
+    </div>
+  </div>
+</section>
+    <section class="main">
+      <section class="content">
+        <h1 id="Linux内核0-11完全注释"><a href="#Linux内核0-11完全注释" class="headerlink" title="Linux内核0.11完全注释"></a><p align="center">Linux内核0.11完全注释</p></h1><p align="right">--修订版3.0</p>  
+
+<h3 id="“RTFSC-Read-The-F-king-Source-Code-☺！”"><a href="#“RTFSC-Read-The-F-king-Source-Code-☺！”" class="headerlink" title="“RTFSC - Read The F**king Source Code ☺！”"></a><p align="center">“RTFSC - Read The F**king Source Code ☺！”</p></h3><p align="right">-- Linus Benedict Torvalds</p>  
+<p align="left">&emsp;&emsp;本书的主要目标是使用尽量少的篇幅或在有限篇幅内，对完整的Linux内核源代码进行全面剖析，以期对操作系统的基本功能和实际实现方式获得全方位的理解。做到对Linux内核有一个完整而深刻的理解，对Linux操作系统的基本工作原理真正理解和入门。</p>  
+
+<h2 id="第一章-概述"><a href="#第一章-概述" class="headerlink" title="第一章 概述"></a>第一章 概述</h2><h3 id="1-1-Linux的诞生和发展"><a href="#1-1-Linux的诞生和发展" class="headerlink" title="1.1 Linux的诞生和发展"></a>1.1 Linux的诞生和发展</h3><p>&emsp;&emsp;Linux0.12版内核的主要变化有：1、Ted Ts’o添加了对终端信号处理支持；2、启动时可以改变使用的屏幕行列值；3、改正了一个文件IO引起的竞争条件；4、增加了对共享库的支持，节省了内存使用量；5、符号链接处理；6、删除目录系统调用；7、Peter MacDonald实现了虚拟终端支持，使得Linux要比当时的某些商业版UNIX还要更胜一筹；8、实现对select()函数支持，这是Peter MacDonald根据一些人为MINIX提供的补丁程序修改而成，但是MINIX却没有采纳这些补丁程序；9、可重新执行的系统调用；10、Linus编制完成数学协处理器仿真代码等。  </p>
+<h3 id="1-2-内容综述"><a href="#1-2-内容综述" class="headerlink" title="1.2 内容综述"></a>1.2 内容综述</h3><p>&emsp;&emsp;Linux-0.11版本是在1991年12月8日发布的。在发布时包括以下文件：<br>-——————————————————————————————————<br>&emsp;&emsp;bootimage.Z - 具有美国键盘代码的压缩启动镜像文件<br>&emsp;&emsp;rootimage.Z - 以1200KB压缩的根文件系统映像文件<br>&emsp;&emsp;linux-0.11-tar.Z - 内核源代码文件。大小为94KB,展开后也仅有325KB<br>&emsp;&emsp;as86.tar.Z - Bruce Evans’而进行执行文件。是16位的汇编程序和装入程序<br>&emsp;&emsp;INSTALL-0.11 - 更新过的安装信息文件<br>-——————————————————————————————————<br>&emsp;&emsp;bootiamge.Z和rootimage.Z是压缩的软盘映像（Image）文件。bootimage是引导启动Image文件，其中主要包括磁盘引导扇区代码、操作系统加载程序和内核执行代码。PC机启动时ROM BIOS中的程序会把默认启动驱动器上的引导扇区代码和数据读入内存，而引导扇区代码则负责把操作系统加载程序和内核执行代码读入内存中，然后把控制权交给操作系统加载程序去进一步准备内核的初始化操作。最终加载程序会把控制权交给内核代码。内核代码若要正常运行就需要文件系统的支持。rootimage就是用于向内核提供最基本支持的根文件系统，其中包括操作系统最起码的一些配置文件和命令执行程序。对于Linux系统中使用的UINX类文件系统，其中主要包括一些规定的目录、配置文件、设备驱动程序、开发程序以及所有其他用户数据或文本文件等。这两个盘合起来就相当于一张可启动的DOS操作系统盘。ax86.tar.Z是16位汇编器链接程序软件包。linux-0.11.tar.Z是压缩的Linux0.11内核源代码。INSTALL-0.11是Linux0.11系统的简单安装说明文档。  </p>
+
+      </section>
+      <section class="extra">
+        
+        <ul class="copyright">
+  
+  <li><strong>本文作者：</strong>hywang</li>
+  <li><strong>本文链接：</strong><a href="https://hywang-66.github.io/2020/10/29/Linux%E5%AE%8C%E5%85%A8%E5%86%85%E6%A0%B8%E5%89%96%E6%9E%90-%E4%B8%80/index.html">https://hywang-66.github.io/2020/10/29/Linux%E5%AE%8C%E5%85%A8%E5%86%85%E6%A0%B8%E5%89%96%E6%9E%90-%E4%B8%80/index.html</a></li>
+  <li><strong>版权声明：</strong>本博客所有文章均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh"
+      rel="external nofollow" target="_blank"> BY-NC-SA </a>许可协议，转载请注明出处！</li>
+  
+</ul>
+        
+        
+        
+        
+<nav class="nav">
+  
+  
+    <a href="/2020/10/15/TOEFL-%E5%86%99%E4%BD%9C%EF%BC%88%E5%BC%80%E5%A4%B4%E6%AE%B5%EF%BC%89/">TOEFL-写作（开头段）<i class="iconfont iconright"></i></a>
+  
+</nav>
+
+      </section>
+      
+      <section class="comments">
+  
+  <div class="btn" id="comments-btn">查看评论</div>
+  
+  
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<div id="gitalk" class="gitalk"></div>
+<script defer src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+  window.onload = function () {
+    var gitalk = new Gitalk({
+      clientID: '54d4a54b2955d8629ac4',
+      clientSecret: '0f969914a95167519c0d22b9a1bda052b24f8320',
+      id: decodeURI(window.location.pathname),
+      repo: 'hywang-66.github.io',
+      owner: 'hywang-66',
+      admin: 'hywang-66'
+    });
+    if ( true ) {
+      $("#comments-btn").on("click", function () {
+        $(this).hide();
+        gitalk.render('gitalk');
+      });
+    } else {
+      gitalk.render('gitalk');
+    }
+  }
+</script>
+
+</section>
+      
+    </section>
+  </div>
+</article>
+  </div>
+</main>
+  <footer class="footer">
+  <div class="footer-social">
+    
+    
+    
+    
+    
+    <a href="https://github.com/hywang-66 " target="_blank" onMouseOver="this.style.color= '#24292E'"
+      onMouseOut="this.style.color='#33333D'">
+      <i class="iconfont footer-social-item  icongithub-fill "></i>
+    </a>
+    
+  </div>
+  <div class="footer-copyright"><p>Powered by <a target="_blank" href="https://hexo.io">Hexo</a>  |  Theme - <a target="_blank" href="https://github.com/hywang-66">hywang</a></p></div>
+</footer>
+  
+      <div class="fab fab-plus">
+    <i class="iconfont iconplus"></i>
+  </div>
+  
+  <div class="fab fab-daovoice">
+    <i class="iconfont iconcomment"></i>
+  </div>
+  
+  <div class="fab fab-up">
+    <i class="iconfont iconcaret-up"></i>
+  </div>
+  
+</body>
+
+
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js"></script>
+
+
+
+
+
+
+<script src="https://cdn.bootcss.com/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+<script src="/js/modules.js"></script>
+<script src="/js/zui.js"></script>
+<script src="/js/script.js"></script>
+
+
+
+
+
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i["DaoVoiceObject"] = r;
+    i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    a.charset = "utf-8";
+    m.parentNode.insertBefore(a, m)
+  })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') +
+    "//widget.daovoice.io/widget/0f81ff2f.js", "daovoice")
+  daovoice('init', {
+    app_id: "abcdefg"
+  }, {
+    launcher: {
+      disableLauncherIcon: true,
+    },
+  });
+  daovoice('update');
+</script>
+
+
+
+<script>
+  (function () {
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+      bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    } else {
+      bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+
+<script>
+  var _hmt = _hmt || [];
+  (function () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?4c204d8bc027a0455b5fc642ac334ca8";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+</html>
